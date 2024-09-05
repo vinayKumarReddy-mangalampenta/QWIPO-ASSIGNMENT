@@ -4,7 +4,7 @@ const cors = require("cors");
 const { v4: uuidV4 } = require("uuid");
 
 const app = express();
-const port = 3000;
+const port = 80;
 
 app.use(cors());
 app.use(express.json());
@@ -20,7 +20,7 @@ function connectToDBAndStartServer() {
 		console.log("Connected to the SQLite database.");
 		db.run("PRAGMA foreign_keys = ON");
 
-		app.listen(port, () => {
+		app.listen(port, "0.0.0.0", () => {
 			console.log(`Server listening on port ${port}`);
 		});
 	});
