@@ -380,6 +380,7 @@ app.delete("/customers/:customerId/addresses/:addressId", (req, res) => {
 	);
 });
 
+// * get all users details
 app.get("/customers", (req, res) => {
 	let sql = "SELECT * FROM customers";
 
@@ -392,6 +393,8 @@ app.get("/customers", (req, res) => {
 		}
 	});
 });
+
+// * get specific user details
 app.get("/customers/search", (req, res) => {
 	const { name, email, phoneNumber } = req.query;
 
@@ -426,6 +429,33 @@ app.get("/customers/search", (req, res) => {
 			res.status(500).json({ error: "Error retrieving customers" });
 		} else {
 			res.json(rows);
+		}
+	});
+});
+
+// * get specific customer details
+app.get("/customer/details/:customerID", (req, res) => {
+	let sql = "SELECT * FROM customers where id = ?";
+	const { customerID } = req.params;
+
+	db.get(sql, [customerID], (err, rows) => {
+		if (err) {
+			console.error(err.message);
+			res.status(500).json({ error: "Error retrieving customers" });
+		} else {
+			db.all(
+				`select * from addresses where customer_id = ?`,
+				[customerID],
+				(err, result) => {
+					if (err) {
+						console.error(err.message);
+						res.status(500).json({ error: "Error retrieving customers" });
+					} else {
+						let data = { ...rows, addresses: result };
+						res.json(data);
+					}
+				}
+			);
 		}
 	});
 });
